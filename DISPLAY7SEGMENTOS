@@ -1,0 +1,49 @@
+// Converte saída de 32 bits do processador para 8 dígitos hexadecimais
+// nos displays de 7 segmentos (catodo comum, ativo em nível baixo)
+module DISPLAY7SEGMENTOS (
+    input  [31:0] dado,
+    output [6:0]  HEX0,  // dígito menos significativo
+    output [6:0]  HEX1,
+    output [6:0]  HEX2,
+    output [6:0]  HEX3,
+    output [6:0]  HEX4,
+    output [6:0]  HEX5,
+    output [6:0]  HEX6,
+    output [6:0]  HEX7   // dígito mais significativo
+);
+    // Decodificador hexadecimal → 7 segmentos
+    // Segmentos: gfedcba (bit 6 = g, bit 0 = a)
+    // 0 = segmento aceso, 1 = apagado (catodo comum ativo baixo)
+    function [6:0] hex_para_seg7;
+        input [3:0] nibble;
+        case (nibble)
+            4'h0: hex_para_seg7 = 7'b1000000;
+            4'h1: hex_para_seg7 = 7'b1111001;
+            4'h2: hex_para_seg7 = 7'b0100100;
+            4'h3: hex_para_seg7 = 7'b0110000;
+            4'h4: hex_para_seg7 = 7'b0011001;
+            4'h5: hex_para_seg7 = 7'b0010010;
+            4'h6: hex_para_seg7 = 7'b0000010;
+            4'h7: hex_para_seg7 = 7'b1111000;
+            4'h8: hex_para_seg7 = 7'b0000000;
+            4'h9: hex_para_seg7 = 7'b0010000;
+            4'ha: hex_para_seg7 = 7'b0001000;
+            4'hb: hex_para_seg7 = 7'b0000011;
+            4'hc: hex_para_seg7 = 7'b1000110;
+            4'hd: hex_para_seg7 = 7'b0100001;
+            4'he: hex_para_seg7 = 7'b0000110;
+            4'hf: hex_para_seg7 = 7'b0001110;
+            default: hex_para_seg7 = 7'b1111111;
+        endcase
+    endfunction
+
+    assign HEX0 = hex_para_seg7(dado[3:0]);
+    assign HEX1 = hex_para_seg7(dado[7:4]);
+    assign HEX2 = hex_para_seg7(dado[11:8]);
+    assign HEX3 = hex_para_seg7(dado[15:12]);
+    assign HEX4 = hex_para_seg7(dado[19:16]);
+    assign HEX5 = hex_para_seg7(dado[23:20]);
+    assign HEX6 = hex_para_seg7(dado[27:24]);
+    assign HEX7 = hex_para_seg7(dado[31:28]);
+
+endmodule
